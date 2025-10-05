@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase, OrderWithItems } from '../lib/supabase';
-import { FileText, Plus, Trash2, CreditCard as Edit, Printer } from 'lucide-react';
+import { FileText, Trash2, CreditCard as Edit, Printer } from 'lucide-react';
 
 interface OrderListProps {
   onEdit: (order: OrderWithItems) => void;

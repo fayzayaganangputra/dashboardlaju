@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase, OrderWithItems } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 import { X, Plus, Trash2 } from 'lucide-react';
 
 interface OrderFormProps {
@@ -17,6 +18,7 @@ interface FormItem {
 }
 
 export default function OrderForm({ onClose, onSuccess, editOrder }: OrderFormProps) {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -99,6 +101,7 @@ export default function OrderForm({ onClose, onSuccess, editOrder }: OrderFormPr
         const { data: orderData, error: orderError } = await supabase
           .from('orders')
           .insert({
+            user_id: user?.id,
             customer_name: customerName,
             customer_phone: customerPhone,
             customer_address: customerAddress || null,

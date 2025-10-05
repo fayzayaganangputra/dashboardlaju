@@ -1,14 +1,33 @@
 import { useState } from 'react';
-import { Plus, Car, FileText, BarChart3 } from 'lucide-react';
+import { Plus, Car, FileText, BarChart3, LogOut } from 'lucide-react';
 import OrderList from './components/OrderList';
 import OrderForm from './components/OrderForm';
 import InvoicePrint from './components/InvoicePrint';
 import MonthlyReport from './components/MonthlyReport';
+import Auth from './components/Auth';
+import { useAuth } from './contexts/AuthContext';
 import { OrderWithItems } from './lib/supabase';
 
 type ViewMode = 'orders' | 'reports';
 
 function App() {
+  const { user, loading, signOut } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-slate-300 border-t-slate-900 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-600">Memuat...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Auth />;
+  }
+
   const [viewMode, setViewMode] = useState<ViewMode>('orders');
   const [showForm, setShowForm] = useState(false);
   const [showInvoice, setShowInvoice] = useState(false);
@@ -55,18 +74,28 @@ function App() {
                   <p className="text-sm text-gray-600">Sistem Manajemen Order Sewa</p>
                 </div>
               </div>
-              {viewMode === 'orders' && (
+              <div className="flex items-center gap-3">
+                {viewMode === 'orders' && (
+                  <button
+                    onClick={() => {
+                      setEditOrder(null);
+                      setShowForm(true);
+                    }}
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 font-medium"
+                  >
+                    <Plus className="w-5 h-5" />
+                    <span>Tambah Order</span>
+                  </button>
+                )}
                 <button
-                  onClick={() => {
-                    setEditOrder(null);
-                    setShowForm(true);
-                  }}
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 font-medium"
+                  onClick={signOut}
+                  className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-600 text-white rounded-xl hover:bg-slate-700 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 font-medium"
+                  title="Keluar"
                 >
-                  <Plus className="w-5 h-5" />
-                  <span>Tambah Order</span>
+                  <LogOut className="w-5 h-5" />
+                  <span className="hidden sm:inline">Keluar</span>
                 </button>
-              )}
+              </div>
             </div>
 
             <div className="flex gap-2 border-t border-gray-200 pt-4">
